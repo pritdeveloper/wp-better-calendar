@@ -99,5 +99,12 @@ class Wp_Better_Calendar_Public {
 		wp_enqueue_script( $this->plugin_name, plugin_dir_url( __FILE__ ) . 'js/wp-better-calendar-public.js', array( 'jquery' ), $this->version, false );
 
 	}
+	
+	/**
+	 * Activate the Widget
+	 */
+	public function activate_widget() {
+		register_widget( 'WP_Better_Calendar_Widget' );
+	}
 
 }

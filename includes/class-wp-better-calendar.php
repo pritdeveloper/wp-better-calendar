@@ -95,6 +95,11 @@ class Wp_Better_Calendar {
 	 * @access   private
 	 */
 	private function load_dependencies() {
+		
+		/**
+		 * The functions file
+		 */
+		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'includes/functions.php';
 
 		/**
 		 * The class responsible for orchestrating the actions and filters of the
@@ -118,6 +123,11 @@ class Wp_Better_Calendar {
 		 * side of the site.
 		 */
 		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'public/class-wp-better-calendar-public.php';
+		
+		/**
+		 * The class for Widget
+		 */
+		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'includes/class-wp-better-calendar-widget.php';
 
 		$this->loader = new Wp_Better_Calendar_Loader();
 
@@ -169,6 +179,7 @@ class Wp_Better_Calendar {
 
 		$this->loader->add_action( 'wp_enqueue_scripts', $plugin_public, 'enqueue_styles' );
 		$this->loader->add_action( 'wp_enqueue_scripts', $plugin_public, 'enqueue_scripts' );
+		$this->loader->add_action( 'widgets_init', $plugin_public, 'activate_widget' );
 
 	}
 

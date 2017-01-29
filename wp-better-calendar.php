@@ -15,7 +15,7 @@
  * @wordpress-plugin
  * Plugin Name:       WP Better Calendar
  * Plugin URI:        https://github.com/prit17may/wp-better-calendar
- * Description:       This is a short description of what the plugin does. It's displayed in the WordPress admin area.
+ * Description:       A better calendar for sidebar widget.
  * Version:           1.0.0
  * Author:            Pritpal Singh
  * Author URI:        https://profiles.wordpress.org/pritpalsinghin
@@ -29,6 +29,8 @@
 if ( ! defined( 'WPINC' ) ) {
 	die;
 }
+
+if( version_compare( "5.5", phpversion(), ">" ) ) return;
 
 /**
  * The code that runs during plugin activation.
