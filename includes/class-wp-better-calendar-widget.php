@@ -15,15 +15,12 @@ class WP_Better_Calendar_Widget extends WP_Widget {
 	}
 
 	public function widget( $args, $instance ) {
+		$selected_post_type = ! empty( $instance['post_type'] ) ? $instance['post_type'] : 'post';
 		echo $args['before_widget'];
 		if ( ! empty( $instance['title'] ) ) {
 			echo $args['before_title'] . apply_filters( 'widget_title', $instance['title'] ) . $args['after_title'];
 		}
-		$current_month = date( 'm' );
-		$current_year = date( 'Y' );
-		$month_to_show = $current_month;
-		$year_to_show = $current_year;
-		wp_bc_show_calendar( $month_to_show, $year_to_show );
+		echo '<div class="wp-better-calendar-container" data-post_type="' . $selected_post_type . '"></div>';
 		echo $args['after_widget'];
 	}
 

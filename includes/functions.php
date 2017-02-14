@@ -35,12 +35,3 @@ if (!function_exists('lg')) {
         jl( $e, $loc, $file_name, true );
     }
 }
-
-function wp_bc_show_calendar( $month_to_show, $year_to_show ) {
-    $date = date_create_from_format( 'Y-m', $year_to_show . "-" . $month_to_show );
-    ?>
-    <div>
-        <?php echo $date->format( 'F Y' ) ?>
-    </div>
-    <?php
-}
