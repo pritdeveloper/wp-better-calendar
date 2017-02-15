@@ -16,6 +16,7 @@
 				if( !year ) year = current_year;
 			}
 			if( !post_type ) post_type = container.data( 'post_type' );
+			container.data( 'month', month ).data( 'year', year ).data( 'post_type', post_type );
 			container.block();
 			$.ajax( ajaxurl, {
 				method: 'post',
@@ -36,6 +37,38 @@
 				}
 			} );
 		}
+		function load_calendar_posts_list( container, day ) {
+			if( !day ) return;
+			var post_type = container.data( 'post_type' );
+			var month = container.data( 'month' );
+			var year = container.data( 'year' );
+			var wpbc_calendar_posts_list = container.find( '.wpbc_calendar_posts_list' );
+			wpbc_calendar_posts_list.slideUp().slideDown( 400 );
+			if( wpbc_calendar_posts_list.html() == '' ) wpbc_calendar_posts_list.html( '...' );
+			wpbc_calendar_posts_list.block();
+			$.ajax( ajaxurl, {
+				method: 'post',
+				data: {
+					action: 'wpbc_calendar_posts_list',
+					post_type: post_type,
+					day: day,
+					month: month,
+					year: year
+				},
+				success: function( html ) {
+					wpbc_calendar_posts_list.html( html );
+				},
+				error: function() {
+					wpbc_calendar_posts_list.html( 'Something went wrong.' );
+					setTimeout( function() {
+						wpbc_calendar_posts_list.slideUp( 400 );
+					}, 4000 );
+				},
+				complete: function() {
+					wpbc_calendar_posts_list.unblock();
+				}
+			} );
+		}
 		var d = $( document );
 		d.on( 'click', '.wpbc_refresh_button', function( e ) {
 			e.preventDefault();
@@ -53,9 +86,12 @@
 			var container = el.closest( '.wp-better-calendar-container' );
 			load_calendar( container, post_type, month, year );
 		} );
-		// d.find( '.wp-better-calendar-container' ).each( function() {
-		// 	var container = $( this );
-		// 	load_calendar( container );
-		// } );
+		d.on( 'click', '.wpbc_show_calendar_posts_list', function( e ) {
+			e.preventDefault();
+			var el = $(this);
+			var day = el.data( 'day' );
+			var container = el.closest( '.wp-better-calendar-container' );
+			load_calendar_posts_list( container, day );
+		} );
 	} );
 })( jQuery );

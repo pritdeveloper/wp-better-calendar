@@ -61,6 +61,15 @@
     background: #fff;
 }
 
+.wp-better-calendar-container tbody td.has_posts,
+.wp-better-calendar-container tbody td.has_posts a {
+    color: #fff !important;
+    background: #F14A41 !important;
+}
+.wp-better-calendar-container tbody td.has_posts a {
+    display: block !important;
+}
+
 .wp-better-calendar-container tbody td a[data-id="show_day_events"] {
     display: block;
     color: #ee2e24;
@@ -69,13 +78,14 @@
 
 .wp-better-calendar-container tbody td.transition:hover,
 .wp-better-calendar-container tbody td.transition.active {
-    background: #ee2e24;
-    color: #fff;
+    background: #ee2e24 !important;
+    color: #fff !important;
 }
 
 .wp-better-calendar-container tbody td.transition:hover a,
 .wp-better-calendar-container tbody td.transition.active a {
-    color: #fff;
+    color: #fff !important;
+    background: #ee2e24 !important;
 }
 
 .wp-better-calendar-container tbody td.transition.active a {
@@ -103,39 +113,30 @@
     color: #fff;
 }
 
-.calendar_events_by_date .cyc_ec_day_events {
+/* posts list css */
+.wp-better-calendar-container .wpbc_calendar_posts_list {
     max-height: 276px;
     overflow: auto;
     width: 100%;
     display: none;
 }
 
-.calendar_events_by_date .cyc_ec_day_events.today {
-    display: block;
-}
-
-.calendar_events_by_date .cyc_ec_day_events .event_container {
+.wp-better-calendar-container .wpbc_calendar_posts_list .wpbc_post_container {
     padding: 10px;
     background-color: #F6F6F6;
     text-align: center;
     border-bottom: solid 4px #F0F0F0;
 }
 
-.calendar_events_by_date .cyc_ec_day_events .event_container div:not(:last-child) {
+.wp-better-calendar-container .wpbc_calendar_posts_list .wpbc_post_container div:not(:last-child) {
     margin-bottom: 4px;
 }
 
-.calendar_events_by_date .cyc_ec_day_events .event_container div.event_date {
+.wp-better-calendar-container .wpbc_calendar_posts_list .wpbc_post_container div.post_date {
     margin-bottom: 4px;
     font-size: 67%;
-    color: grey
+    color: grey;
 }
-
-.calendar_events_by_date .cyc_ec_day_events .event_container div.event_time {
-    color: #ee2e24;
-    font-size: 77%;
-}
-
 
 /* Transitions */
 

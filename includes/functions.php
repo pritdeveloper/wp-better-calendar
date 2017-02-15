@@ -39,7 +39,6 @@ if (!function_exists('lg')) {
 add_action( 'wp_ajax_wpbc_get_calendar', 'wpbc_get_calendar' );
 add_action( 'wp_ajax_nopriv_wpbc_get_calendar', 'wpbc_get_calendar' );
 function wpbc_get_calendar() {
-    global $wpdb, $wp_locale;
     $post_type = isset( $_POST[ 'post_type' ] ) ? $_POST[ 'post_type' ] : 'post';
     // month and year
     {
@@ -52,6 +51,7 @@ function wpbc_get_calendar() {
 }
 
 function wpbc_make_calendar( $post_type = 'post', $month = null, $year = null ) {
+    global $wpdb;
     if( !$month ) $month = date( 'n' );
     if( !$year ) $year = date( 'Y' );
     ob_start();
@@ -130,11 +130,27 @@ function wpbc_make_calendar( $post_type = 'post', $month = null, $year = null ) 
                 }
                 ?>
                 <?php for( $i = 1; $i <= $last_day_of_month; $i++ ) { ?>
-                    <?php $is_today = $i == $today_date && $month == $today_month && $year == $today_year ?>
-                    <td class="cell day<?php echo $is_today ? ' today' : '' ?> transition transition_200"><?php echo $i ?></td>
+                    <?php
+                    $is_today = $i == $today_date && $month == $today_month && $year == $today_year;
+                    // day has posts
+                    {
+                        $day = date_create_from_format( "Y-n-j", "{$year}-{$month}-{$i}" )->format( "Y-m-d" );
+                        $day_start = $day . ' 00:00:00';
+                        $day_end = $day . ' 23:59:59';
+                        $query = $wpdb->prepare( "SELECT * FROM {$wpdb->posts} WHERE post_type='%s' AND post_status='publish' AND post_date >= '%s' AND post_date <= '%s' LIMIT 1", $post_type, $day_start, $day_end );
+                        $row = $wpdb->get_row( $query );
+                        $day_has_posts = $row !== null;
+                    }
+                    ?>
+                    <td class="cell day<?php echo $is_today ? ' today' : '' ?><?php echo $day_has_posts ? ' has_posts' : '' ?> transition transition_200">
+                        <?php
+                        if( $day_has_posts ) echo '<a href="javascript:;" class="wpbc_show_calendar_posts_list" data-post_type="' . $post_type . '" data-day="' . $i . '" data-month="' . $month . '" data-year="' . $year . '">' . $i . '</a>';
+                        else echo $i;
+                        ?>
+                    </td>
                     <?php $ct++ ?>
                     <?php
-                    if( $ct == 7 ) {
+                    if( $i < $last_day_of_month && $ct == 7 ) {
                         echo "</tr><tr>";
                         $ct = 0;
                     }
@@ -146,10 +162,48 @@ function wpbc_make_calendar( $post_type = 'post', $month = null, $year = null ) 
                 <?php } ?>
             </tr>
         </tbody>
-        <tfoot>
-        </tfoot>
     </table>
     <table class="prev_next"><tbody><tr><td><a href="javascript:;" class="wpbc_show_calendar_click" data-post_type="<?php echo $post_type ?>" data-month="<?php echo $prev_month ?>" data-year="<?php echo $prev_year ?>"><div>&laquo; <?php echo $prev_mnth_short_name ?></div></a></span></td><td><a href="javascript:;" class="wpbc_show_calendar_click" data-post_type="<?php echo $post_type ?>" data-month="<?php echo $next_month ?>" data-year="<?php echo $next_year ?>"><div><?php echo $next_mnth_short_name ?> &raquo;</div></a></span></td></tr></tbody></table>
+    <div class="wpbc_calendar_posts_list"></div>
+    <?php
+    return ob_get_clean();
+}
+
+add_action( 'wp_ajax_wpbc_calendar_posts_list', 'wpbc_calendar_posts_list' );
+add_action( 'wp_ajax_nopriv_wpbc_calendar_posts_list', 'wpbc_calendar_posts_list' );
+function wpbc_calendar_posts_list() {
+    $post_type = isset( $_POST[ 'post_type' ] ) ? $_POST[ 'post_type' ] : 'post';
+    $day = isset( $_POST[ 'day' ] ) ? $_POST[ 'day' ] : '';
+    $month = isset( $_POST[ 'month' ] ) ? $_POST[ 'month' ] : date( 'n' );
+    $year = isset( $_POST[ 'year' ] ) ? $_POST[ 'year' ] : date( 'Y' );
+    $posts_list = wpbc_make_calendar_list( $post_type, $day, $month, $year );
+    echo apply_filters( 'wpbc_calendar_posts_list', $posts_list, $post_type, $day, $month, $year );
+    die;
+}
+function wpbc_make_calendar_list( $post_type = 'post', $day = null, $month = null, $year = null ) {
+    global $wpdb;
+    if( !$day ) return 'Something went wrong. Please try again.';
+    if( !$month ) $month = date( 'n' );
+    if( !$year ) $year = date( 'Y' );
+    // get post ids for current day
+    {
+        $date = date_create_from_format( "Y-n-j", "{$year}-{$month}-{$day}" )->format( "Y-m-d" );
+        $date_start = $date . ' 00:00:00';
+        $date_end = $date . ' 23:59:59';
+        $query = $wpdb->prepare( "SELECT ID FROM {$wpdb->posts} WHERE post_type='%s' AND post_status='publish' AND post_date >= '%s' AND post_date <= '%s'", $post_type, $date_start, $date_end );
+        $results = $wpdb->get_results( $query );
+        if( empty( $results ) ) return '<h3>No Posts found for this day.</h3>';
+        $post_ids = array();
+        foreach( $results as $result ) $post_ids[] = $result->ID;
+    }
+    ob_start();
+    ?>
+    <?php foreach( $post_ids as $post_id ) { ?>
+        <div class="wpbc_post_container">
+            <div class="post_date"><?php echo get_the_date( 'F d, Y', $post_id ) ?></div>
+            <div><a href="<?php echo get_post_permalink( $post_id ) ?>" style="color: #ee2e24"><?php echo get_the_title( $post_id ) ?></a></div>
+        </div>
+    <?php } ?>
     <?php
     return ob_get_clean();
 }
