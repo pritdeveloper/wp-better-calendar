@@ -1,4 +1,186 @@
-/**
- * All of the CSS for your public-facing functionality should be
- * included in this file.
- */
+.wp-better-calendar-container {
+    border: solid 3px #F0F0F0;
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+     -khtml-user-select: none;
+       -moz-user-select: none;
+        -ms-user-select: none;
+            user-select: none;
+}
+
+.wp-better-calendar-container table {
+    width: 100%;
+    color: #000;
+    margin-bottom: 0 !important;
+}
+
+.wp-better-calendar-container table,
+.wp-better-calendar-container table tr,
+.wp-better-calendar-container table tr th,
+.wp-better-calendar-container table tr td {
+	border: none;
+}
+.wp-better-calendar-container .prev_next {
+    background: #ee2e24;
+}
+
+.wp-better-calendar-container .mnth_year th {
+    text-align: center;
+    padding: 5px 0;
+    background: #eef0f2;
+}
+
+.wp-better-calendar-container .mnth_year span {
+    font-size: 13px;
+}
+
+.wp-better-calendar-container .week_days {
+    background: #ee2e24;
+}
+
+.wp-better-calendar-container .week_days th {
+    padding: 3px 0;
+    background: #ee2e24;
+    color: #fff;
+    width: 13%;
+    text-align: center;
+    border: solid 1px #ee2e24;
+}
+
+.wp-better-calendar-container tbody td {
+	border: none !important;
+}
+
+.wp-better-calendar-container tbody td.day {
+    text-align: center;
+    padding: 5px 0;
+    background: #eef0f2;
+}
+
+.wp-better-calendar-container tbody td.today {
+    background: #fff;
+}
+
+.wp-better-calendar-container tbody td a[data-id="show_day_events"] {
+    display: block;
+    color: #ee2e24;
+    cursor: pointer;
+}
+
+.wp-better-calendar-container tbody td.transition:hover,
+.wp-better-calendar-container tbody td.transition.active {
+    background: #ee2e24;
+    color: #fff;
+}
+
+.wp-better-calendar-container tbody td.transition:hover a,
+.wp-better-calendar-container tbody td.transition.active a {
+    color: #fff;
+}
+
+.wp-better-calendar-container tbody td.transition.active a {
+    cursor: default;
+}
+
+.wp-better-calendar-container .prev_next {
+    background: #ee2e24;
+}
+
+.wp-better-calendar-container .prev_next td {
+    padding: 3px;
+    text-align: left;
+    background: #ee2e24;
+}
+
+.wp-better-calendar-container .prev_next td:last-child {
+	border-left: solid 1px #fff !important;
+    text-align: right;
+}
+
+.wp-better-calendar-container .prev_next td a,
+.wp-better-calendar-container .prev_next td a div {
+	text-decoration: none !important;
+    color: #fff;
+}
+
+.calendar_events_by_date .cyc_ec_day_events {
+    max-height: 276px;
+    overflow: auto;
+    width: 100%;
+    display: none;
+}
+
+.calendar_events_by_date .cyc_ec_day_events.today {
+    display: block;
+}
+
+.calendar_events_by_date .cyc_ec_day_events .event_container {
+    padding: 10px;
+    background-color: #F6F6F6;
+    text-align: center;
+    border-bottom: solid 4px #F0F0F0;
+}
+
+.calendar_events_by_date .cyc_ec_day_events .event_container div:not(:last-child) {
+    margin-bottom: 4px;
+}
+
+.calendar_events_by_date .cyc_ec_day_events .event_container div.event_date {
+    margin-bottom: 4px;
+    font-size: 67%;
+    color: grey
+}
+
+.calendar_events_by_date .cyc_ec_day_events .event_container div.event_time {
+    color: #ee2e24;
+    font-size: 77%;
+}
+
+
+/* Transitions */
+
+.transition_100 {
+    -webkit-transition: all 0.1s ease-in;
+    -moz-transition: all 0.1s ease-in;
+    -ms-transition: all 0.1s ease-in;
+    -o-transition: all 0.1s ease-in;
+    transition: all 0.1s ease-in;
+}
+
+.transition_200 {
+    -webkit-transition: all 0.2s ease-in;
+    -moz-transition: all 0.2s ease-in;
+    -ms-transition: all 0.2s ease-in;
+    -o-transition: all 0.2s ease-in;
+    transition: all 0.2s ease-in;
+}
+
+.transition_300 {
+    -webkit-transition: all 0.3s ease-in;
+    -moz-transition: all 0.3s ease-in;
+    -ms-transition: all 0.3s ease-in;
+    -o-transition: all 0.3s ease-in;
+    transition: all 0.3s ease-in;
+}
+
+.transition_400 {
+    -webkit-transition: all 0.4s ease-in;
+    -moz-transition: all 0.4s ease-in;
+    -ms-transition: all 0.4s ease-in;
+    -o-transition: all 0.4s ease-in;
+    transition: all 0.4s ease-in;
+}
+
+.transition_500 {
+    -webkit-transition: all 0.5s ease-in;
+    -moz-transition: all 0.5s ease-in;
+    -ms-transition: all 0.5s ease-in;
+    -o-transition: all 0.5s ease-in;
+    transition: all 0.5s ease-in;
+}
+.rider_desc {
+    text-align: justify;
+}
+.selected_lang{
+	font-weight:bold;
+}

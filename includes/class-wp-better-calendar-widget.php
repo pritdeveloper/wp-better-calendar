@@ -20,7 +20,7 @@ class WP_Better_Calendar_Widget extends WP_Widget {
 		if ( ! empty( $instance['title'] ) ) {
 			echo $args['before_title'] . apply_filters( 'widget_title', $instance['title'] ) . $args['after_title'];
 		}
-		echo '<div class="wp-better-calendar-container" data-post_type="' . $selected_post_type . '"></div>';
+		echo '<div class="wp-better-calendar-container" data-post_type="' . $selected_post_type . '">' . wpbc_make_calendar( $selected_post_type ) . '</div>';
 		echo $args['after_widget'];
 	}
 
