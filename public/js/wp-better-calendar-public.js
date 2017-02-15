@@ -1,10 +1,13 @@
 (function( $ ) {
-	$.blockUI.defaults.message = '<h3>Please wait...</h3>';
-	$.blockUI.defaults.css.border = 'none';
-	$.blockUI.defaults.css.background = 'transparent';
-	$.blockUI.defaults.css.width = 'auto';
-	$.blockUI.defaults.css.color = 'white';
 	$( function() {
+		// override blockui defaults
+		{
+			$.blockUI.defaults.message = '<h3>Please wait...</h3>';
+			$.blockUI.defaults.css.border = 'none';
+			$.blockUI.defaults.css.background = 'transparent';
+			$.blockUI.defaults.css.width = 'auto';
+			$.blockUI.defaults.css.color = 'white';
+		}
 		function load_calendar ( container, post_type, month, year ) {
 			// month and year
 			{
@@ -43,6 +46,8 @@
 			var month = container.data( 'month' );
 			var year = container.data( 'year' );
 			var wpbc_calendar_posts_list = container.find( '.wpbc_calendar_posts_list' );
+			if( wpbc_calendar_posts_list.data( 'loading' ) == 1 ) return;
+			wpbc_calendar_posts_list.data( 'loading', 1 );
 			wpbc_calendar_posts_list.slideUp().slideDown( 400 );
 			if( wpbc_calendar_posts_list.html() == '' ) wpbc_calendar_posts_list.html( '...' );
 			wpbc_calendar_posts_list.block();
@@ -65,7 +70,7 @@
 					}, 4000 );
 				},
 				complete: function() {
-					wpbc_calendar_posts_list.unblock();
+					wpbc_calendar_posts_list.data( 'loading', 0 ).unblock();
 				}
 			} );
 		}
