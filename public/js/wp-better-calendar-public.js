@@ -98,5 +98,32 @@
 			var container = el.closest( '.wp-better-calendar-container' );
 			load_calendar_posts_list( container, day );
 		} );
+		d.on( 'click', '.wpbc_year_month_container', function( e ) {
+			e.preventDefault();
+			var wpbc_year_month_container = $( this );
+			var wpbc_year_month_selector_container = wpbc_year_month_container.closest( 'tr' ).find( '.wpbc_year_month_selector_container' );
+			wpbc_year_month_container.fadeOut( 400, function() {
+				wpbc_year_month_selector_container.show();
+			} );
+		} );
+		d.on( 'click', '.wpbc_load_year_month_cancel', function( e ) {
+			e.preventDefault();
+			var el = $( this );
+			var tr = el.closest( 'tr' );
+			var wpbc_year_month_container = tr.find( '.wpbc_year_month_container' );
+			var wpbc_year_month_selector_container = tr.find( '.wpbc_year_month_selector_container' );
+			wpbc_year_month_selector_container.fadeOut( 400, function() {
+				wpbc_year_month_container.show();
+			} );
+		} );
+		d.on( 'click', '.wpbc_load_year_month', function( e ) {
+			e.preventDefault();
+			var el = $( this );
+			var wpbc_year_month_selector_container = el.closest( '.wpbc_year_month_selector_container' );
+			var month = wpbc_year_month_selector_container.find( '.wpbc_month_selector' ).val();
+			var year = wpbc_year_month_selector_container.find( '.wpbc_year_selector' ).val();
+			var container = el.closest( '.wp-better-calendar-container' );
+			load_calendar( container, null, month, year );
+		} );
 	} );
 })( jQuery );
