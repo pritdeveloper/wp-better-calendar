@@ -128,7 +128,7 @@ function wpbc_make_calendar( $post_type = 'post', $month = null, $year = null ) 
                         <select class="wpbc_month_selector">
                             <?php for( $i = 1; $i <= 12; $i++ ) { ?>
                                 <?php $selected = $i == $month ? ' selected' : '' ?>
-                                <option value="<?php echo $i ?>"<?php echo $selected ?>><?php echo date_create_from_format( 'n', $i )->format( 'M' ) ?></option>
+                                <option value="<?php echo $i ?>"<?php echo $selected ?>><?php echo date_create_from_format( 'n', $i )->format( ( count( $post_type_years ) > 1 ? 'M' : 'F' ) ) ?></option>
                             <?php } ?>
                         </select>
                         <?php if( count( $post_type_years ) > 1 ) { ?>
