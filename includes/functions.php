@@ -236,7 +236,7 @@ function wpbc_make_calendar_list( $post_type = 'post', $day = null, $month = nul
         $date_end = $date . ' 23:59:59';
         $query = $wpdb->prepare( "SELECT ID FROM {$wpdb->posts} WHERE post_type='%s' AND post_status='publish' AND post_date >= '%s' AND post_date <= '%s'", $post_type, $date_start, $date_end );
         $results = $wpdb->get_results( $query );
-        if( empty( $results ) ) return '<h3>No Posts found for this day.</h3>';
+        if( empty( $results ) ) return '<h3>No Post found for this day.</h3>';
         $post_ids = array();
         foreach( $results as $result ) $post_ids[] = $result->ID;
     }
