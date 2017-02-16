@@ -61,6 +61,11 @@
     background: #fff;
 }
 
+.wp-better-calendar-container tbody td.today a {
+    border: solid 1px #fff !important;
+    border-radius: 50% !important;
+}
+
 .wp-better-calendar-container tbody td.has_posts,
 .wp-better-calendar-container tbody td.has_posts a {
     color: #fff !important;
