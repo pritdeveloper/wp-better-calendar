@@ -131,12 +131,16 @@ function wpbc_make_calendar( $post_type = 'post', $month = null, $year = null ) 
                                 <option value="<?php echo $i ?>"<?php echo $selected ?>><?php echo date_create_from_format( 'n', $i )->format( 'M' ) ?></option>
                             <?php } ?>
                         </select>
-                        <select class="wpbc_year_selector">
-                            <?php foreach( $post_type_years as $post_type_year ) { ?>
-                                <?php $selected = $post_type_year == $year ? ' selected' : '' ?>
-                                <option value="<?php echo $post_type_year ?>"<?php echo $selected ?>><?php echo $post_type_year ?></option>
-                            <?php } ?>
-                        </select>
+                        <?php if( count( $post_type_years ) > 1 ) { ?>
+                            <select class="wpbc_year_selector">
+                                <?php foreach( $post_type_years as $post_type_year ) { ?>
+                                    <?php $selected = $post_type_year == $year ? ' selected' : '' ?>
+                                    <option value="<?php echo $post_type_year ?>"<?php echo $selected ?>><?php echo $post_type_year ?></option>
+                                <?php } ?>
+                            </select>
+                        <?php } else { ?>
+                            <input type="hidden" class="wpbc_year_selector" value="<?php echo current( $post_type_years ) ?>" />
+                        <?php } ?>
                         <a href="javascript:;" class="wpbc_load_year_month">Go</a>
                     </div>
                     <?php } else { ?>
@@ -270,7 +274,7 @@ function wpbc_make_calendar_list( $post_type = 'post', $day = null, $month = nul
 function wpbc_get_post_type_years( $post_type = 'post' ) {
     global $wpdb;
     $post_type_years = array();
-    $query = $wpdb->prepare( "SELECT DISTINCT YEAR(post_date) as year FROM {$wpdb->posts} WHERE post_type='$post_type' ORDER BY year", $post_type );
+    $query = $wpdb->prepare( "SELECT DISTINCT YEAR(post_date) as year FROM {$wpdb->posts} WHERE post_type='$post_type' AND post_status='publish' ORDER BY year", $post_type );
     $results = $wpdb->get_results( $query );
     if( !empty( $results ) ) foreach( $results as $result ) $post_type_years[] = $result->year;
     return $post_type_years;
