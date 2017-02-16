@@ -46,12 +46,11 @@
 			var month = container.data( 'month' );
 			var year = container.data( 'year' );
 			var wpbc_calendar_posts_list = container.find( '.wpbc_calendar_posts_list' );
-			if( wpbc_calendar_posts_list.data( 'loading' ) == 1 ) return;
-			wpbc_calendar_posts_list.data( 'loading', 1 );
+			if( wpbc_calendar_posts_list.data( 'loaded_day' ) == day ) return;
+			wpbc_calendar_posts_list.data( 'loaded_day', day );
 			var wpbc_small_line = container.find( '.wpbc_small_line' );
 			if( wpbc_small_line.length ) wpbc_small_line.show();
-			wpbc_calendar_posts_list.slideUp().slideDown( 400 );
-			if( wpbc_calendar_posts_list.html() == '' ) wpbc_calendar_posts_list.html( '...' );
+			if( wpbc_calendar_posts_list.html() == '' ) wpbc_calendar_posts_list.html( '<div class="wpbc_post_container"><div class="post_date">-------------</div><div><a href="javascript:;" style="color: #ee2e24;-webkit-box-shadow: none;box-shadow: none;">-------</a></div></div>' ).show();
 			wpbc_calendar_posts_list.block();
 			$.ajax( ajaxurl, {
 				method: 'post',
@@ -63,16 +62,16 @@
 					year: year
 				},
 				success: function( html ) {
-					wpbc_calendar_posts_list.html( html );
+					wpbc_calendar_posts_list.html( html ).hide().slideDown();
 				},
 				error: function() {
-					wpbc_calendar_posts_list.html( 'Something went wrong.' );
+					wpbc_calendar_posts_list.html( 'Something went wrong.' ).data( 'loaded_day', 0 );
 					setTimeout( function() {
-						wpbc_calendar_posts_list.slideUp( 400 );
+						wpbc_calendar_posts_list.slideUp();
 					}, 4000 );
 				},
 				complete: function() {
-					wpbc_calendar_posts_list.data( 'loading', 0 ).unblock();
+					wpbc_calendar_posts_list.unblock();
 				}
 			} );
 		}

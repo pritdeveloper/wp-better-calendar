@@ -255,7 +255,7 @@ function wpbc_make_calendar_list( $post_type = 'post', $day = null, $month = nul
         $date_end = $date . ' 23:59:59';
         $query = $wpdb->prepare( "SELECT ID FROM {$wpdb->posts} WHERE post_type='%s' AND post_status='publish' AND post_date >= '%s' AND post_date <= '%s'", $post_type, $date_start, $date_end );
         $results = $wpdb->get_results( $query );
-        if( empty( $results ) ) return '<h3>No Post found for this day.</h3>';
+        if( empty( $results ) ) return '<h3 style="margin: 0;text-align: center">No Post found for this day.</h3>';
         $post_ids = array();
         foreach( $results as $result ) $post_ids[] = $result->ID;
     }
@@ -264,7 +264,7 @@ function wpbc_make_calendar_list( $post_type = 'post', $day = null, $month = nul
     <?php foreach( $post_ids as $post_id ) { ?>
         <div class="wpbc_post_container">
             <div class="post_date"><?php echo get_the_date( 'F d, Y', $post_id ) ?></div>
-            <div><a href="<?php echo get_post_permalink( $post_id ) ?>" style="color: #ee2e24"><?php echo get_the_title( $post_id ) ?></a></div>
+            <div><a href="<?php echo get_post_permalink( $post_id ) ?>" style="color: #ee2e24;-webkit-box-shadow: none;box-shadow: none;"><?php echo get_the_title( $post_id ) ?></a></div>
         </div>
     <?php } ?>
     <?php
