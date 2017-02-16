@@ -75,13 +75,6 @@
 			} );
 		}
 		var d = $( document );
-		d.on( 'click', '.wpbc_refresh_button', function( e ) {
-			e.preventDefault();
-			var el = $(this);
-			var container = el.closest( '.wp-better-calendar-container' );
-			var post_type = container.data( 'post_type' );
-			load_calendar( container, post_type );
-		} );
 		d.on( 'click', '.wpbc_show_calendar_click', function( e ) {
 			e.preventDefault();
 			var el = $(this);

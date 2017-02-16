@@ -117,7 +117,6 @@ function wpbc_make_calendar( $post_type = 'post', $month = null, $year = null ) 
     // post type years for the selected post type
     $post_type_years = wpbc_get_post_type_years( $post_type );
     ?>
-    <button class="wpbc_refresh_button" type="button" style="width: 100%">Refresh</button>
     <table data-post_type="<?php echo $post_type ?>" data-month="<?php echo $month ?>" data-year="<?php echo $year ?>">
         <thead>
             <tr class="mnth_year">
