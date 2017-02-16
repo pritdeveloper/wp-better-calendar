@@ -121,6 +121,7 @@ function wpbc_make_calendar( $post_type = 'post', $month = null, $year = null ) 
         <thead>
             <tr class="mnth_year">
                 <th colspan="7">
+                    <?php if( $previous || $next ) { ?>
                     <span class="wpbc_year_month_container" title="Click to edit"><?php echo date_create_from_format( 'n Y', "{$month} {$year}" )->format( 'F Y' ) ?></span>
                     <div class="wpbc_year_month_selector_container">
                         <a href="javascript:;" class="wpbc_load_year_month_cancel" title="Cancel">&times;</a>
@@ -138,6 +139,9 @@ function wpbc_make_calendar( $post_type = 'post', $month = null, $year = null ) 
                         </select>
                         <a href="javascript:;" class="wpbc_load_year_month">Go</a>
                     </div>
+                    <?php } else { ?>
+                        <span><?php echo date_create_from_format( 'n Y', "{$month} {$year}" )->format( 'F Y' ) ?></span>
+                    <?php } ?>
                 </th>
             </tr>
             <tr class="week_days">
