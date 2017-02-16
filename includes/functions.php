@@ -76,26 +76,34 @@ function wpbc_make_calendar( $post_type = 'post', $month = null, $year = null ) 
     
     // get the previous and next months and years
     {
-        // prev_next
+        // previous
         {
-            $d = date_create_from_format( 'Y-n', "{$year}-{$month}" );
-            $prev_month = $d->modify( 'first day of previous month' )->format( 'n' );
-            
-            $d = date_create_from_format( 'Y-n', "{$year}-{$month}" );
-            $prev_year = $d->modify( 'first day of previous month' )->format( 'Y' );
-            
-            $prev_mnth_short_name = date_create_from_format( 'n', $prev_month )->format( 'M' );
+        	$previous = $wpdb->get_row("SELECT MONTH(post_date) AS month, YEAR(post_date) AS year
+        		FROM {$wpdb->posts}
+        		WHERE post_date < '$year-$month-01'
+        		AND post_type = '{$post_type}' AND post_status = 'publish'
+    			ORDER BY post_date DESC
+    			LIMIT 1");
+    		if( $previous ) {
+        		$prev_month = $previous->month;
+        		$prev_year = $previous->year;
+                $prev_mnth_short_name = date_create_from_format( 'n', $prev_month )->format( 'M' );
+		    }
         }
         
         // next
         {
-            $d = date_create_from_format( 'Y-n', "{$year}-{$month}" );
-            $next_month = $d->modify( 'first day of next month' )->format( 'n' );
-            
-            $d = date_create_from_format( 'Y-n', "{$year}-{$month}" );
-            $next_year = $d->modify( 'first day of next month' )->format( 'Y' );
-            
-            $next_mnth_short_name = date_create_from_format( 'n', $next_month )->format( 'M' );
+        	$next = $wpdb->get_row("SELECT MONTH(post_date) AS month, YEAR(post_date) AS year
+        		FROM $wpdb->posts
+        		WHERE post_date > '$year-$month-{$last_day_of_month} 23:59:59'
+        		AND post_type = '{$post_type}' AND post_status = 'publish'
+    			ORDER BY post_date ASC
+    			LIMIT 1");
+    		if( $next ) {
+                $next_month = $next->month;
+    		    $next_year = $next->year;
+                $next_mnth_short_name = date_create_from_format( 'n', $next_month )->format( 'M' );
+		    }
         }
     }
     
@@ -182,7 +190,24 @@ function wpbc_make_calendar( $post_type = 'post', $month = null, $year = null ) 
             </tr>
         </tbody>
     </table>
-    <table class="prev_next"><tbody><tr><td><a href="javascript:;" class="wpbc_show_calendar_click" data-post_type="<?php echo $post_type ?>" data-month="<?php echo $prev_month ?>" data-year="<?php echo $prev_year ?>"><div>&laquo; <?php echo $prev_mnth_short_name ?></div></a></span></td><td><a href="javascript:;" class="wpbc_show_calendar_click" data-post_type="<?php echo $post_type ?>" data-month="<?php echo $next_month ?>" data-year="<?php echo $next_year ?>"><div><?php echo $next_mnth_short_name ?> &raquo;</div></a></span></td></tr></tbody></table>
+    <?php if( $previous || $next ) { ?>
+        <table class="prev_next">
+            <tbody>
+                <tr>
+                    <td>
+                        <?php if( $previous ) { ?>
+                            <a href="javascript:;" class="wpbc_show_calendar_click" data-post_type="<?php echo $post_type ?>" data-month="<?php echo $prev_month ?>" data-year="<?php echo $prev_year ?>"><div>&laquo; <?php echo $prev_mnth_short_name ?></div></a>
+                        <?php } ?>
+                    </td>
+                    <td>
+                        <?php if( $next ) { ?>
+                            <a href="javascript:;" class="wpbc_show_calendar_click" data-post_type="<?php echo $post_type ?>" data-month="<?php echo $next_month ?>" data-year="<?php echo $next_year ?>"><div><?php echo $next_mnth_short_name ?> &raquo;</div></a>
+                        <?php } ?>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    <?php } ?>
     <div class="wpbc_calendar_posts_list"></div>
     <?php
     return ob_get_clean();
