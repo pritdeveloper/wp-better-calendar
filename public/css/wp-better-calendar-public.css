@@ -146,6 +146,13 @@
     cursor: pointer;
 }
 
+.wp-better-calendar-container .wpbc_small_line {
+    display: none;
+    width: 100%;
+    height: 3px;
+    background: #ee2e24;
+}
+
 /* Transitions */
 
 .transition_100 {

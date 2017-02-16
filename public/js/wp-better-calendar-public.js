@@ -48,6 +48,8 @@
 			var wpbc_calendar_posts_list = container.find( '.wpbc_calendar_posts_list' );
 			if( wpbc_calendar_posts_list.data( 'loading' ) == 1 ) return;
 			wpbc_calendar_posts_list.data( 'loading', 1 );
+			var wpbc_small_line = container.find( '.wpbc_small_line' );
+			if( wpbc_small_line.length ) wpbc_small_line.show();
 			wpbc_calendar_posts_list.slideUp().slideDown( 400 );
 			if( wpbc_calendar_posts_list.html() == '' ) wpbc_calendar_posts_list.html( '...' );
 			wpbc_calendar_posts_list.block();

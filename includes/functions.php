@@ -216,6 +216,8 @@ function wpbc_make_calendar( $post_type = 'post', $month = null, $year = null ) 
                 </tr>
             </tbody>
         </table>
+    <?php } else { ?>
+        <div class="wpbc_small_line"></div>
     <?php } ?>
     <div class="wpbc_calendar_posts_list"></div>
     <?php
