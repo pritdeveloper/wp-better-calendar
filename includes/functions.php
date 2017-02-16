@@ -147,9 +147,11 @@ function wpbc_make_calendar( $post_type = 'post', $month = null, $year = null ) 
                 <?php } ?>
             </tr>
         </thead>
+        <?php ob_start() ?>
         <tbody>
             <tr>
                 <?php
+                $month_has_any_post = false;
                 $ct = 0;
                 if( $first_day_num > 1 ) {
                     $ct = $first_day_num - 1;
@@ -167,6 +169,7 @@ function wpbc_make_calendar( $post_type = 'post', $month = null, $year = null ) 
                         $query = $wpdb->prepare( "SELECT * FROM {$wpdb->posts} WHERE post_type='%s' AND post_status='publish' AND post_date >= '%s' AND post_date <= '%s' LIMIT 1", $post_type, $day_start, $day_end );
                         $row = $wpdb->get_row( $query );
                         $day_has_posts = $row !== null;
+                        if( $day_has_posts ) $month_has_any_post = true;
                     }
                     ?>
                     <td class="cell day<?php echo $is_today ? ' today' : '' ?><?php echo $day_has_posts ? ' has_posts' : '' ?> transition transition_200">
@@ -189,6 +192,13 @@ function wpbc_make_calendar( $post_type = 'post', $month = null, $year = null ) 
                 <?php } ?>
             </tr>
         </tbody>
+        <?php
+        $tb = ob_get_clean();
+        echo $month_has_any_post ? $tb : '';
+        ?>
+        <?php if( !$month_has_any_post ) { ?>
+            <tfoot><tr><td colspan="7" style="text-align: center;color: #ee2e24">No Post for <i><?php echo date_create_from_format( 'n Y', "{$month} {$year}" )->format( 'F Y' ) ?></i></td></tr></tfoot>
+        <?php } ?>
     </table>
     <?php if( $previous || $next ) { ?>
         <table class="prev_next">
