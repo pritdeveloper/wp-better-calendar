@@ -12,6 +12,7 @@
 .wp-better-calendar-container a:link,
 .wp-better-calendar-container a:focus {
     outline: none !important;
+    text-decoration: none !important;
 }
 
 .wp-better-calendar-container table {

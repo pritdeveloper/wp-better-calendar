@@ -2,7 +2,7 @@
 	$( function() {
 		// override blockui defaults
 		{
-			$.blockUI.defaults.message = '<h3 style="color: #fff">Please wait...</h3>';
+			$.blockUI.defaults.message = '<h3 style="color: #fff;background: transparent">Please wait...</h3>';
 			$.blockUI.defaults.css.border = 'none';
 			$.blockUI.defaults.css.background = 'transparent';
 			$.blockUI.defaults.css.width = 'auto';
