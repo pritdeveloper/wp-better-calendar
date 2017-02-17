@@ -55,6 +55,10 @@ if (!function_exists('wpbc_get_calendar')) {
 if (!function_exists('wpbc_make_calendar')) {
     function wpbc_make_calendar( $post_type = 'post', $month = null, $year = null ) {
         global $wpdb;
+        $all_post_types = get_post_types( array(
+			'public' => true,
+		), 'objects' );
+        $post_type_obj = $all_post_types[ $post_type ];
         if( !$month ) $month = date( 'n' );
         if( !$year ) $year = date( 'Y' );
         ob_start();
@@ -207,7 +211,7 @@ if (!function_exists('wpbc_make_calendar')) {
             echo $month_has_any_post ? $tb : '';
             ?>
             <?php if( !$month_has_any_post ) { ?>
-                <tfoot><tr><td colspan="7" style="text-align: center;color: #ee2e24">No Post for <i><?php echo date_create_from_format( 'n Y', "{$month} {$year}" )->format( 'F Y' ) ?></i></td></tr></tfoot>
+                <tfoot><tr><td colspan="7" style="text-align: center;color: #ee2e24">No <?php echo $post_type_obj->labels->singular_name ?> for <i><?php echo date_create_from_format( 'n Y', "{$month} {$year}" )->format( 'F Y' ) ?></i></td></tr></tfoot>
             <?php } ?>
         </table>
         <?php if( $previous || $next ) { ?>
@@ -253,6 +257,10 @@ if (!function_exists('wpbc_calendar_posts_list')) {
 if (!function_exists('wpbc_make_calendar_list')) {
     function wpbc_make_calendar_list( $post_type = 'post', $day = null, $month = null, $year = null ) {
         global $wpdb;
+        $all_post_types = get_post_types( array(
+			'public' => true,
+		), 'objects' );
+        $post_type_obj = $all_post_types[ $post_type ];
         if( !$day ) return '<h3 style="margin: 0;text-align: center">Something went wrong.<br />Please try again.</h3>';
         if( !$month ) $month = date( 'n' );
         if( !$year ) $year = date( 'Y' );
@@ -263,7 +271,7 @@ if (!function_exists('wpbc_make_calendar_list')) {
             $date_end = $date . ' 23:59:59';
             $query = $wpdb->prepare( "SELECT ID FROM {$wpdb->posts} WHERE post_type='%s' AND post_status='publish' AND post_date >= '%s' AND post_date <= '%s'", $post_type, $date_start, $date_end );
             $results = $wpdb->get_results( $query );
-            if( empty( $results ) ) return '<h3 style="margin: 0;text-align: center">No Post found for this day.</h3>';
+            if( empty( $results ) ) return '<h3 style="margin: 0;text-align: center">No ' . $post_type_obj->labels->singular_name . ' found for this day.</h3>';
             $post_ids = array();
             foreach( $results as $result ) $post_ids[] = $result->ID;
         }
