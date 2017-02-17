@@ -76,26 +76,34 @@ function wpbc_make_calendar( $post_type = 'post', $month = null, $year = null ) 
     
     // get the previous and next months and years
     {
-        // prev_next
+        // previous
         {
-            $d = date_create_from_format( 'Y-n', "{$year}-{$month}" );
-            $prev_month = $d->modify( 'first day of previous month' )->format( 'n' );
-            
-            $d = date_create_from_format( 'Y-n', "{$year}-{$month}" );
-            $prev_year = $d->modify( 'first day of previous month' )->format( 'Y' );
-            
-            $prev_mnth_short_name = date_create_from_format( 'n', $prev_month )->format( 'M' );
+        	$previous = $wpdb->get_row("SELECT MONTH(post_date) AS month, YEAR(post_date) AS year
+        		FROM {$wpdb->posts}
+        		WHERE post_date < '$year-$month-01'
+        		AND post_type = '{$post_type}' AND post_status = 'publish'
+    			ORDER BY post_date DESC
+    			LIMIT 1");
+    		if( $previous ) {
+        		$prev_month = $previous->month;
+        		$prev_year = $previous->year;
+                $prev_mnth_short_name = date_create_from_format( 'n', $prev_month )->format( 'M' );
+		    }
         }
         
         // next
         {
-            $d = date_create_from_format( 'Y-n', "{$year}-{$month}" );
-            $next_month = $d->modify( 'first day of next month' )->format( 'n' );
-            
-            $d = date_create_from_format( 'Y-n', "{$year}-{$month}" );
-            $next_year = $d->modify( 'first day of next month' )->format( 'Y' );
-            
-            $next_mnth_short_name = date_create_from_format( 'n', $next_month )->format( 'M' );
+        	$next = $wpdb->get_row("SELECT MONTH(post_date) AS month, YEAR(post_date) AS year
+        		FROM $wpdb->posts
+        		WHERE post_date > '$year-$month-{$last_day_of_month} 23:59:59'
+        		AND post_type = '{$post_type}' AND post_status = 'publish'
+    			ORDER BY post_date ASC
+    			LIMIT 1");
+    		if( $next ) {
+                $next_month = $next->month;
+    		    $next_year = $next->year;
+                $next_mnth_short_name = date_create_from_format( 'n', $next_month )->format( 'M' );
+		    }
         }
     }
     
@@ -105,13 +113,39 @@ function wpbc_make_calendar( $post_type = 'post', $month = null, $year = null ) 
         $today_month = date( 'n' );
         $today_year = date( 'Y' );
     }
+    
+    // post type years for the selected post type
+    $post_type_years = wpbc_get_post_type_years( $post_type );
     ?>
-    <button class="wpbc_refresh_button" type="button" style="width: 100%">Refresh</button>
     <table data-post_type="<?php echo $post_type ?>" data-month="<?php echo $month ?>" data-year="<?php echo $year ?>">
         <thead>
             <tr class="mnth_year">
                 <th colspan="7">
-                    <span><?php echo date_create_from_format( 'n Y', "{$month} {$year}" )->format( 'F Y' ) ?></span>
+                    <?php if( $previous || $next ) { ?>
+                    <span class="wpbc_year_month_container" title="Click to edit"><?php echo date_create_from_format( 'n Y', "{$month} {$year}" )->format( 'F Y' ) ?></span>
+                    <div class="wpbc_year_month_selector_container">
+                        <a href="javascript:;" class="wpbc_load_year_month_cancel" title="Cancel">&times;</a>
+                        <select class="wpbc_month_selector">
+                            <?php for( $i = 1; $i <= 12; $i++ ) { ?>
+                                <?php $selected = $i == $month ? ' selected' : '' ?>
+                                <option value="<?php echo $i ?>"<?php echo $selected ?>><?php echo date_create_from_format( 'n', $i )->format( ( count( $post_type_years ) > 1 ? 'M' : 'F' ) ) ?></option>
+                            <?php } ?>
+                        </select>
+                        <?php if( count( $post_type_years ) > 1 ) { ?>
+                            <select class="wpbc_year_selector">
+                                <?php foreach( $post_type_years as $post_type_year ) { ?>
+                                    <?php $selected = $post_type_year == $year ? ' selected' : '' ?>
+                                    <option value="<?php echo $post_type_year ?>"<?php echo $selected ?>><?php echo $post_type_year ?></option>
+                                <?php } ?>
+                            </select>
+                        <?php } else { ?>
+                            <input type="hidden" class="wpbc_year_selector" value="<?php echo current( $post_type_years ) ?>" />
+                        <?php } ?>
+                        <a href="javascript:;" class="wpbc_load_year_month">Go</a>
+                    </div>
+                    <?php } else { ?>
+                        <span><?php echo date_create_from_format( 'n Y', "{$month} {$year}" )->format( 'F Y' ) ?></span>
+                    <?php } ?>
                 </th>
             </tr>
             <tr class="week_days">
@@ -120,9 +154,11 @@ function wpbc_make_calendar( $post_type = 'post', $month = null, $year = null ) 
                 <?php } ?>
             </tr>
         </thead>
+        <?php ob_start() ?>
         <tbody>
             <tr>
                 <?php
+                $month_has_any_post = false;
                 $ct = 0;
                 if( $first_day_num > 1 ) {
                     $ct = $first_day_num - 1;
@@ -140,6 +176,7 @@ function wpbc_make_calendar( $post_type = 'post', $month = null, $year = null ) 
                         $query = $wpdb->prepare( "SELECT * FROM {$wpdb->posts} WHERE post_type='%s' AND post_status='publish' AND post_date >= '%s' AND post_date <= '%s' LIMIT 1", $post_type, $day_start, $day_end );
                         $row = $wpdb->get_row( $query );
                         $day_has_posts = $row !== null;
+                        if( $day_has_posts ) $month_has_any_post = true;
                     }
                     ?>
                     <td class="cell day<?php echo $is_today ? ' today' : '' ?><?php echo $day_has_posts ? ' has_posts' : '' ?> transition transition_200">
@@ -162,8 +199,34 @@ function wpbc_make_calendar( $post_type = 'post', $month = null, $year = null ) 
                 <?php } ?>
             </tr>
         </tbody>
+        <?php
+        $tb = ob_get_clean();
+        echo $month_has_any_post ? $tb : '';
+        ?>
+        <?php if( !$month_has_any_post ) { ?>
+            <tfoot><tr><td colspan="7" style="text-align: center;color: #ee2e24">No Post for <i><?php echo date_create_from_format( 'n Y', "{$month} {$year}" )->format( 'F Y' ) ?></i></td></tr></tfoot>
+        <?php } ?>
     </table>
-    <table class="prev_next"><tbody><tr><td><a href="javascript:;" class="wpbc_show_calendar_click" data-post_type="<?php echo $post_type ?>" data-month="<?php echo $prev_month ?>" data-year="<?php echo $prev_year ?>"><div>&laquo; <?php echo $prev_mnth_short_name ?></div></a></span></td><td><a href="javascript:;" class="wpbc_show_calendar_click" data-post_type="<?php echo $post_type ?>" data-month="<?php echo $next_month ?>" data-year="<?php echo $next_year ?>"><div><?php echo $next_mnth_short_name ?> &raquo;</div></a></span></td></tr></tbody></table>
+    <?php if( $previous || $next ) { ?>
+        <table class="prev_next">
+            <tbody>
+                <tr>
+                    <td>
+                        <?php if( $previous ) { ?>
+                            <a href="javascript:;" class="wpbc_show_calendar_click" data-post_type="<?php echo $post_type ?>" data-month="<?php echo $prev_month ?>" data-year="<?php echo $prev_year ?>"><div>&laquo; <?php echo $prev_mnth_short_name ?></div></a>
+                        <?php } ?>
+                    </td>
+                    <td>
+                        <?php if( $next ) { ?>
+                            <a href="javascript:;" class="wpbc_show_calendar_click" data-post_type="<?php echo $post_type ?>" data-month="<?php echo $next_month ?>" data-year="<?php echo $next_year ?>"><div><?php echo $next_mnth_short_name ?> &raquo;</div></a>
+                        <?php } ?>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    <?php } else { ?>
+        <div class="wpbc_small_line"></div>
+    <?php } ?>
     <div class="wpbc_calendar_posts_list"></div>
     <?php
     return ob_get_clean();
@@ -192,7 +255,7 @@ function wpbc_make_calendar_list( $post_type = 'post', $day = null, $month = nul
         $date_end = $date . ' 23:59:59';
         $query = $wpdb->prepare( "SELECT ID FROM {$wpdb->posts} WHERE post_type='%s' AND post_status='publish' AND post_date >= '%s' AND post_date <= '%s'", $post_type, $date_start, $date_end );
         $results = $wpdb->get_results( $query );
-        if( empty( $results ) ) return '<h3>No Posts found for this day.</h3>';
+        if( empty( $results ) ) return '<h3 style="margin: 0;text-align: center">No Post found for this day.</h3>';
         $post_ids = array();
         foreach( $results as $result ) $post_ids[] = $result->ID;
     }
@@ -201,9 +264,18 @@ function wpbc_make_calendar_list( $post_type = 'post', $day = null, $month = nul
     <?php foreach( $post_ids as $post_id ) { ?>
         <div class="wpbc_post_container">
             <div class="post_date"><?php echo get_the_date( 'F d, Y', $post_id ) ?></div>
-            <div><a href="<?php echo get_post_permalink( $post_id ) ?>" style="color: #ee2e24"><?php echo get_the_title( $post_id ) ?></a></div>
+            <div><a href="<?php echo get_post_permalink( $post_id ) ?>" style="color: #ee2e24;-webkit-box-shadow: none;box-shadow: none;"><?php echo get_the_title( $post_id ) ?></a></div>
         </div>
     <?php } ?>
     <?php
     return ob_get_clean();
+}
+
+function wpbc_get_post_type_years( $post_type = 'post' ) {
+    global $wpdb;
+    $post_type_years = array();
+    $query = $wpdb->prepare( "SELECT DISTINCT YEAR(post_date) as year FROM {$wpdb->posts} WHERE post_type='$post_type' AND post_status='publish' ORDER BY year", $post_type );
+    $results = $wpdb->get_results( $query );
+    if( !empty( $results ) ) foreach( $results as $result ) $post_type_years[] = $result->year;
+    return $post_type_years;
 }

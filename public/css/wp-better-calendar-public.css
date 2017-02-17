@@ -7,6 +7,12 @@
         -ms-user-select: none;
             user-select: none;
 }
+.wp-better-calendar-container a,
+.wp-better-calendar-container a:active,
+.wp-better-calendar-container a:link,
+.wp-better-calendar-container a:focus {
+    outline: none !important;
+}
 
 .wp-better-calendar-container table {
     width: 100%;
@@ -18,6 +24,7 @@
 .wp-better-calendar-container table tr,
 .wp-better-calendar-container table tr th,
 .wp-better-calendar-container table tr td {
+    background: #fff;
 	border: none;
 }
 .wp-better-calendar-container .prev_next {
@@ -61,11 +68,19 @@
     background: #fff;
 }
 
+.wp-better-calendar-container tbody td.today a {
+    border: solid 1px #fff !important;
+    border-radius: 50% !important;
+}
+
 .wp-better-calendar-container tbody td.has_posts,
 .wp-better-calendar-container tbody td.has_posts a {
     color: #fff !important;
     background: #F14A41 !important;
+    -webkit-box-shadow: none;
+    box-shadow: none;
 }
+
 .wp-better-calendar-container tbody td.has_posts a {
     display: block !important;
 }
@@ -136,6 +151,30 @@
     margin-bottom: 4px;
     font-size: 67%;
     color: grey;
+}
+
+.wp-better-calendar-container .wpbc_year_month_selector_container {
+    display: none;
+}
+
+.wp-better-calendar-container .wpbc_year_month_container {
+    cursor: pointer;
+}
+
+.wp-better-calendar-container .wpbc_small_line {
+    display: none;
+    width: 100%;
+    height: 3px;
+    background: #ee2e24;
+}
+
+.wp-better-calendar-container .wpbc_year_month_selector_container,
+.wp-better-calendar-container .wpbc_month_selector,
+.wp-better-calendar-container .wpbc_year_selector,
+.wp-better-calendar-container .wpbc_load_year_month,
+.wp-better-calendar-container .wpbc_load_year_month_cancel {
+    background: inherit !important;
+    color: #000 !important;
 }
 
 /* Transitions */
