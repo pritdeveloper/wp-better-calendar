@@ -28,9 +28,9 @@ class WP_Better_Calendar_Widget extends WP_Widget {
 		$title = ! empty( $instance['title'] ) ? $instance['title'] : esc_html__( 'Better Calendar' );
 		$selected_post_type = ! empty( $instance['post_type'] ) ? $instance['post_type'] : 'post';
 		// all post types
-		$all_post_types = get_post_types( array(
+		$all_post_types = apply_filters( 'wpbc_widget_post_types', get_post_types( array(
 			'public' => true,
-		), 'objects' );
+		), 'objects' ), $instance );
 		?>
 		<p>
 			<label for="<?php echo esc_attr( $this->get_field_id( 'title' ) ); ?>"><?php esc_attr_e( 'Title:' ); ?></label>
