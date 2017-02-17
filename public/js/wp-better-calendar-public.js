@@ -33,7 +33,7 @@
 					container.html( container_html );
 				},
 				error: function() {
-					container.html('Something went wrong. Please refresh the page.');
+					container.html( '<div style="text-align: center;color: red">Something went wrong.<br />Please refresh the page.</div>' );
 				},
 				complete: function() {
 					container.unblock();
@@ -50,8 +50,8 @@
 			wpbc_calendar_posts_list.data( 'loaded_day', day );
 			var wpbc_small_line = container.find( '.wpbc_small_line' );
 			if( wpbc_small_line.length ) wpbc_small_line.show();
-			if( wpbc_calendar_posts_list.html() == '' ) wpbc_calendar_posts_list.html( '<div class="wpbc_post_container"><div class="post_date">-------------</div><div><a href="javascript:;" style="color: #ee2e24;-webkit-box-shadow: none;box-shadow: none;">-------</a></div></div>' ).show();
-			wpbc_calendar_posts_list.block();
+			if( wpbc_calendar_posts_list.html() == '' ) wpbc_calendar_posts_list.html( '<div class="wpbc_post_container"><div class="post_date">-------------</div><div><a href="javascript:;" style="color: #ee2e24;-webkit-box-shadow: none;box-shadow: none;">-------</a></div></div>' );
+			wpbc_calendar_posts_list.show().block();
 			$.ajax( ajaxurl, {
 				method: 'post',
 				data: {
@@ -65,10 +65,7 @@
 					wpbc_calendar_posts_list.html( html ).hide().slideDown();
 				},
 				error: function() {
-					wpbc_calendar_posts_list.html( 'Something went wrong.' ).data( 'loaded_day', 0 );
-					setTimeout( function() {
-						wpbc_calendar_posts_list.slideUp();
-					}, 4000 );
+					wpbc_calendar_posts_list.html( '<div class="wpbc_post_container"><div class="post_date">Something went wrong</div><div><a href="javascript:;" style="color: #ee2e24;-webkit-box-shadow: none;box-shadow: none;cursor: default">Please try again</a></div></div>' ).hide().slideDown().data( 'loaded_day', 0 );
 				},
 				complete: function() {
 					wpbc_calendar_posts_list.unblock();
