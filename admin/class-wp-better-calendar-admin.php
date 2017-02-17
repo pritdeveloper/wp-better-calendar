@@ -100,4 +100,16 @@ class Wp_Better_Calendar_Admin {
 
 	}
 
+	public function remove_post_types_with_no_posts( $post_types ) {
+		global $wpdb;
+		$new_post_types = array();
+		foreach( $post_types as $post_type => $post_type_obj ) {
+			$result = $wpdb->get_row("SELECT * FROM $wpdb->posts WHERE post_type='$post_type' AND post_status='publish' LIMIT 1");
+			if($result){
+				$new_post_types[ $post_type ] = $post_type_obj;
+			}
+		}
+		return $new_post_types;
+	}
+
 }

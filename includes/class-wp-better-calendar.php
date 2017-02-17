@@ -163,6 +163,7 @@ class Wp_Better_Calendar {
 
 		$this->loader->add_action( 'admin_enqueue_scripts', $plugin_admin, 'enqueue_styles' );
 		$this->loader->add_action( 'admin_enqueue_scripts', $plugin_admin, 'enqueue_scripts' );
+		$this->loader->add_filter( 'wpbc_widget_post_types', $plugin_admin, 'remove_post_types_with_no_posts' );
 
 	}
 
