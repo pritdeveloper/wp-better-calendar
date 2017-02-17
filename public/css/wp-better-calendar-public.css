@@ -27,6 +27,7 @@
 .wp-better-calendar-container table tr td {
     background: #fff;
 	border: none;
+	border-spacing: 0 !important;
 }
 .wp-better-calendar-container .prev_next {
     background: #ee2e24;
@@ -86,12 +87,6 @@
     display: block !important;
 }
 
-.wp-better-calendar-container tbody td a[data-id="show_day_events"] {
-    display: block;
-    color: #ee2e24;
-    cursor: pointer;
-}
-
 .wp-better-calendar-container tbody td.transition:hover,
 .wp-better-calendar-container tbody td.transition.active {
     background: #ee2e24 !important;
@@ -124,9 +119,11 @@
 }
 
 .wp-better-calendar-container .prev_next td a,
+.wp-better-calendar-container .prev_next td a:hover,
 .wp-better-calendar-container .prev_next td a div {
 	text-decoration: none !important;
     color: #fff;
+    padding: 0;
 }
 
 /* posts list css */

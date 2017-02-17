@@ -40,11 +40,11 @@ add_action( 'wp_ajax_wpbc_get_calendar', 'wpbc_get_calendar' );
 add_action( 'wp_ajax_nopriv_wpbc_get_calendar', 'wpbc_get_calendar' );
 if (!function_exists('wpbc_get_calendar')) {
     function wpbc_get_calendar() {
-        $post_type = isset( $_POST[ 'post_type' ] ) ? $_POST[ 'post_type' ] : 'post';
+        $post_type = isset( $_POST[ 'post_type' ] ) ? wpbc_clean( $_POST[ 'post_type' ] ) : 'post';
         // month and year
         {
-            $month = isset( $_POST[ 'month' ] ) ? $_POST[ 'month' ] : date( 'n' );
-            $year = isset( $_POST[ 'year' ] ) ? $_POST[ 'year' ] : date( 'Y' );
+            $month = isset( $_POST[ 'month' ] ) ? absint( $_POST[ 'month' ] ) : date( 'n' );
+            $year = isset( $_POST[ 'year' ] ) ? absint( $_POST[ 'year' ] ) : date( 'Y' );
         }
         $calendar = wpbc_make_calendar( $post_type, $month, $year );
         echo apply_filters( 'wpbc_get_calendar', $calendar, $post_type, $month, $year );
@@ -240,10 +240,10 @@ add_action( 'wp_ajax_wpbc_calendar_posts_list', 'wpbc_calendar_posts_list' );
 add_action( 'wp_ajax_nopriv_wpbc_calendar_posts_list', 'wpbc_calendar_posts_list' );
 if (!function_exists('wpbc_calendar_posts_list')) {
     function wpbc_calendar_posts_list() {
-        $post_type = isset( $_POST[ 'post_type' ] ) ? $_POST[ 'post_type' ] : 'post';
-        $day = isset( $_POST[ 'day' ] ) ? $_POST[ 'day' ] : '';
-        $month = isset( $_POST[ 'month' ] ) ? $_POST[ 'month' ] : date( 'n' );
-        $year = isset( $_POST[ 'year' ] ) ? $_POST[ 'year' ] : date( 'Y' );
+        $post_type = isset( $_POST[ 'post_type' ] ) ? wpbc_clean( $_POST[ 'post_type' ] ) : 'post';
+        $day = isset( $_POST[ 'day' ] ) ? absint( $_POST[ 'day' ] ) : '';
+        $month = isset( $_POST[ 'month' ] ) ? absint( $_POST[ 'month' ] ) : date( 'n' );
+        $year = isset( $_POST[ 'year' ] ) ? absint( $_POST[ 'year' ] ) : date( 'Y' );
         $posts_list = wpbc_make_calendar_list( $post_type, $day, $month, $year );
         echo apply_filters( 'wpbc_calendar_posts_list', $posts_list, $post_type, $day, $month, $year );
         die;
@@ -253,7 +253,7 @@ if (!function_exists('wpbc_calendar_posts_list')) {
 if (!function_exists('wpbc_make_calendar_list')) {
     function wpbc_make_calendar_list( $post_type = 'post', $day = null, $month = null, $year = null ) {
         global $wpdb;
-        if( !$day ) return 'Something went wrong. Please try again.';
+        if( !$day ) return '<h3 style="margin: 0;text-align: center">Something went wrong.<br />Please try again.</h3>';
         if( !$month ) $month = date( 'n' );
         if( !$year ) $year = date( 'Y' );
         // get post ids for current day
@@ -284,9 +284,19 @@ if (!function_exists('wpbc_get_post_type_years')) {
     function wpbc_get_post_type_years( $post_type = 'post' ) {
         global $wpdb;
         $post_type_years = array();
-        $query = $wpdb->prepare( "SELECT DISTINCT YEAR(post_date) as year FROM {$wpdb->posts} WHERE post_type='$post_type' AND post_status='publish' ORDER BY year", $post_type );
+        $query = $wpdb->prepare( "SELECT DISTINCT YEAR(post_date) as year FROM {$wpdb->posts} WHERE post_type='%s' AND post_status='publish' ORDER BY year", $post_type );
         $results = $wpdb->get_results( $query );
         if( !empty( $results ) ) foreach( $results as $result ) $post_type_years[] = $result->year;
         return $post_type_years;
+    }
+}
+
+if( !function_exists( 'wpbc_clean' ) ) {
+    function wpbc_clean( $var ) {
+    	if ( is_array( $var ) ) {
+    		return array_map( 'wpbc_clean', $var );
+    	} else {
+    		return is_scalar( $var ) ? sanitize_text_field( $var ) : $var;
+    	}
     }
 }
