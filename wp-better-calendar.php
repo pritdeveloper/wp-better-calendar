@@ -14,7 +14,7 @@
  *
  * @wordpress-plugin
  * Plugin Name:       WP Better Calendar
- * Plugin URI:        https://github.com/prit17may/wp-better-calendar
+ * Plugin URI:        https://wordpress.org/plugins/wp-better-calendar/
  * Description:       A better calendar for sidebar widget.
  * Version:           1.0.0
  * Author:            Pritpal Singh
