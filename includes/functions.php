@@ -55,10 +55,7 @@ if (!function_exists('wpbc_get_calendar')) {
 if (!function_exists('wpbc_make_calendar')) {
     function wpbc_make_calendar( $post_type = 'post', $month = null, $year = null ) {
         global $wpdb;
-        $all_post_types = get_post_types( array(
-			'public' => true,
-		), 'objects' );
-        $post_type_obj = $all_post_types[ $post_type ];
+        $post_type_obj = get_post_type_object( $post_type );
         if( !$month ) $month = date( 'n' );
         if( !$year ) $year = date( 'Y' );
         ob_start();
@@ -257,10 +254,7 @@ if (!function_exists('wpbc_calendar_posts_list')) {
 if (!function_exists('wpbc_make_calendar_list')) {
     function wpbc_make_calendar_list( $post_type = 'post', $day = null, $month = null, $year = null ) {
         global $wpdb;
-        $all_post_types = get_post_types( array(
-			'public' => true,
-		), 'objects' );
-        $post_type_obj = $all_post_types[ $post_type ];
+        $post_type_obj = get_post_type_object( $post_type );
         if( !$day ) return '<h3 style="margin: 0;text-align: center">Something went wrong.<br />Please try again.</h3>';
         if( !$month ) $month = date( 'n' );
         if( !$year ) $year = date( 'Y' );
