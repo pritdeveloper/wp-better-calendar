@@ -182,7 +182,7 @@ if (!function_exists('wpbc_make_calendar')) {
                             if( $day_has_posts ) $month_has_any_post = true;
                         }
                         ?>
-                        <td class="cell day<?php echo $is_today ? ' today' : '' ?><?php echo $day_has_posts ? ' has_posts' : '' ?> transition transition_200">
+                        <td class="cell day<?php echo $is_today ? ' today' : '' ?><?php echo $day_has_posts ? ' has_posts' : '' ?> transition transition_200"<?php echo $is_today ? ' title="Today"' : '' ?>>
                             <?php
                             if( $day_has_posts ) echo '<a href="javascript:;" class="wpbc_show_calendar_posts_list" data-post_type="' . $post_type . '" data-day="' . $i . '" data-month="' . $month . '" data-year="' . $year . '">' . $i . '</a>';
                             else echo $i;
