@@ -16,12 +16,16 @@ class WP_Better_Calendar_Widget extends WP_Widget {
 
 	public function widget( $args, $instance ) {
 		$selected_post_type = ! empty( $instance['post_type'] ) ? $instance['post_type'] : 'post';
-		echo $args['before_widget'];
-		if ( ! empty( $instance['title'] ) ) {
-			echo $args['before_title'] . apply_filters( 'widget_title', $instance['title'] ) . $args['after_title'];
+		global $wpdb;
+		$result = $wpdb->get_row("SELECT * FROM $wpdb->posts WHERE post_type='$selected_post_type' AND post_status='publish' LIMIT 1");
+		if($result){
+			echo $args['before_widget'];
+			if ( ! empty( $instance['title'] ) ) {
+				echo $args['before_title'] . apply_filters( 'widget_title', $instance['title'] ) . $args['after_title'];
+			}
+			echo '<div class="wp-better-calendar-container" data-post_type="' . $selected_post_type . '">' . wpbc_make_calendar( $selected_post_type ) . '</div>';
+			echo $args['after_widget'];
 		}
-		echo '<div class="wp-better-calendar-container" data-post_type="' . $selected_post_type . '">' . wpbc_make_calendar( $selected_post_type ) . '</div>';
-		echo $args['after_widget'];
 	}
 
 	public function form( $instance ) {
