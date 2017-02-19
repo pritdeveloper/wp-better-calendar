@@ -1,5 +1,6 @@
 (function( $ ) {
 	$( function() {
+		var cached_posts = [];
 		// override blockui defaults
 		{
 			$.blockUI.defaults.message = '<h3 style="color: #fff;background: transparent">Please wait...</h3>';
@@ -9,6 +10,7 @@
 			$.blockUI.defaults.css.color = 'white';
 		}
 		function load_calendar ( container, post_type, month, year ) {
+			cached_posts = [];
 			// month and year
 			{
 				var d = new Date();
@@ -50,6 +52,9 @@
 			wpbc_calendar_posts_list.data( 'loaded_day', day );
 			var wpbc_small_line = container.find( '.wpbc_small_line' );
 			if( wpbc_small_line.length ) wpbc_small_line.show();
+			
+			// check cached data
+			if( day in cached_posts ) return render_posts_list( wpbc_calendar_posts_list, cached_posts[ day ] );
 			if( wpbc_calendar_posts_list.html() == '' ) wpbc_calendar_posts_list.html( '<div class="wpbc_post_container"><div class="post_date">-------------</div><div><a href="javascript:;" style="color: #ee2e24;-webkit-box-shadow: none;box-shadow: none;">-------</a></div></div>' );
 			wpbc_calendar_posts_list.show().block();
 			$.ajax( ajaxurl, {
@@ -61,8 +66,18 @@
 					month: month,
 					year: year
 				},
-				success: function( html ) {
-					wpbc_calendar_posts_list.html( html ).hide().slideDown();
+				success: function( data ) {
+					var html = '';
+					data = JSON.parse( data );
+					if( data.status == 'success' ) {
+						posts = data.data;
+						render_posts_list( wpbc_calendar_posts_list, posts );
+						// saved cached posts for later use
+						cached_posts[ day ] = posts;
+					} else {
+						html = '<h3 style="margin: 0;text-align: center">' + data.msg + '</h3>';
+						wpbc_calendar_posts_list.html( html ).hide().slideDown();
+					}
 				},
 				error: function() {
 					wpbc_calendar_posts_list.html( '<div class="wpbc_post_container"><div class="post_date">Something went wrong</div><div><a href="javascript:;" style="color: #ee2e24;-webkit-box-shadow: none;box-shadow: none;cursor: default">Please try again</a></div></div>' ).hide().slideDown().data( 'loaded_day', 0 );
@@ -71,6 +86,18 @@
 					wpbc_calendar_posts_list.unblock();
 				}
 			} );
+		}
+		function render_posts_list( wpbc_calendar_posts_list, posts ) {
+			var html = '';
+			for( var i in posts ) {
+				var post = posts[ i ];
+				html += `
+					<div class="wpbc_post_container">
+						<div class="post_date">` + post.date + `</div>
+						<div><a href="` + post.permalink + `" style="color: #ee2e24;-webkit-box-shadow: none;box-shadow: none;">` + post.title + `</a></div>
+					</div>`;
+			}
+			wpbc_calendar_posts_list.html( html ).hide().slideDown();
 		}
 		var d = $( document );
 		d.on( 'click', '.wpbc_show_calendar_click', function( e ) {

@@ -4,7 +4,7 @@ Donate link: https://www.paypal.me/ppsingh/25
 Tags: calendar, widgets, admin, ajax, smooth
 Requires at least: 3.0.1
 Tested up to: 4.7.2
-Stable tag: trunk
+Stable tag: 1.0.1
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -34,10 +34,16 @@ Yes. Any Public *post_type* is supported.
 
 == Changelog ==
 
+= 1.0.1 =
+* cache functionality for day posts.
+* respect user selected start week on.
+* title for week days and today.
+* minor bug fixes.
+
 = 1.0.0 =
 * First stable release.
 
 == Upgrade Notice ==
 
-= 1.0.0 =
-1.0.0 is the current stable version.
+= 1.0.1 =
+1.0.1 is the current stable version with added functionality and bug fixes.
