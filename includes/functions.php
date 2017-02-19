@@ -67,7 +67,7 @@ if (!function_exists('wpbc_make_calendar')) {
             $days = array();
             for ( $i = 0; $i < 7; $i++ ) {
                 $day = strftime( '%A', $timestamp );
-                $days[] = substr( $day, 0, 1 );
+                $days[ $day ] = substr( $day, 0, 1 );
                 $timestamp = strtotime('+1 day', $timestamp);
             }
         }
@@ -155,8 +155,8 @@ if (!function_exists('wpbc_make_calendar')) {
                     </th>
                 </tr>
                 <tr class="week_days">
-                    <?php foreach( $days as $day ) { ?>
-                        <th><?php echo $day ?></th>
+                    <?php foreach( $days as $day_label => $day ) { ?>
+                        <th title="<?php echo $day_label ?>"><?php echo $day ?></th>
                     <?php } ?>
                 </tr>
             </thead>
