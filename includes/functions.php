@@ -288,6 +288,7 @@ if (!function_exists('wpbc_get_calendar_list')) {
             $data = array();
             foreach( $post_ids as $post_id ) {
                 $data[] = array(
+                    'id' => $post_id,
                     'date' => get_the_date( 'F d, Y', $post_id ),
                     'permalink' => get_post_permalink( $post_id ),
                     'title' => get_the_title( $post_id ),
