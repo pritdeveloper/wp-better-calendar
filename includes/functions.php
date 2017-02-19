@@ -245,17 +245,26 @@ if (!function_exists('wpbc_calendar_posts_list')) {
         $day = isset( $_POST[ 'day' ] ) ? absint( $_POST[ 'day' ] ) : '';
         $month = isset( $_POST[ 'month' ] ) ? absint( $_POST[ 'month' ] ) : date( 'n' );
         $year = isset( $_POST[ 'year' ] ) ? absint( $_POST[ 'year' ] ) : date( 'Y' );
-        $posts_list = wpbc_make_calendar_list( $post_type, $day, $month, $year );
-        echo apply_filters( 'wpbc_calendar_posts_list', $posts_list, $post_type, $day, $month, $year );
+        $posts_list = wpbc_get_calendar_list( $post_type, $day, $month, $year );
+        echo json_encode( $posts_list );
         die;
     }
 }
 
-if (!function_exists('wpbc_make_calendar_list')) {
-    function wpbc_make_calendar_list( $post_type = 'post', $day = null, $month = null, $year = null ) {
+if (!function_exists('wpbc_get_calendar_list')) {
+    function wpbc_get_calendar_list( $post_type = 'post', $day = null, $month = null, $year = null ) {
+        $ret = array(
+            'status' => '',
+            'msg' => '',
+            'data' => ''
+        );
         global $wpdb;
         $post_type_obj = get_post_type_object( $post_type );
-        if( !$day ) return '<h3 style="margin: 0;text-align: center">Something went wrong.<br />Please try again.</h3>';
+        if( !$day ) {
+            $ret[ 'status' ] = 'error';
+            $ret[ 'msg' ] = 'Something went wrong.<br />Please try again.';
+            return apply_filters( 'wpbc_get_calendar_list', $ret, $post_type, $day, $month, $year );
+        }
         if( !$month ) $month = date( 'n' );
         if( !$year ) $year = date( 'Y' );
         // get post ids for current day
@@ -265,20 +274,29 @@ if (!function_exists('wpbc_make_calendar_list')) {
             $date_end = $date . ' 23:59:59';
             $query = $wpdb->prepare( "SELECT ID FROM {$wpdb->posts} WHERE post_type='%s' AND post_status='publish' AND post_date >= '%s' AND post_date <= '%s'", $post_type, $date_start, $date_end );
             $results = $wpdb->get_results( $query );
-            if( empty( $results ) ) return '<h3 style="margin: 0;text-align: center">No ' . $post_type_obj->labels->singular_name . ' found for this day.</h3>';
+            if( empty( $results ) ) {
+                $ret[ 'status' ] = 'error';
+                $ret[ 'msg' ] = 'No ' . $post_type_obj->labels->singular_name . ' found for this day.';
+                return apply_filters( 'wpbc_get_calendar_list', $ret, $post_type, $day, $month, $year );
+            }
             $post_ids = array();
             foreach( $results as $result ) $post_ids[] = $result->ID;
         }
-        ob_start();
-        ?>
-        <?php foreach( $post_ids as $post_id ) { ?>
-            <div class="wpbc_post_container">
-                <div class="post_date"><?php echo get_the_date( 'F d, Y', $post_id ) ?></div>
-                <div><a href="<?php echo get_post_permalink( $post_id ) ?>" style="color: #ee2e24;-webkit-box-shadow: none;box-shadow: none;"><?php echo get_the_title( $post_id ) ?></a></div>
-            </div>
-        <?php } ?>
-        <?php
-        return ob_get_clean();
+        
+        // make data
+        {
+            $data = array();
+            foreach( $post_ids as $post_id ) {
+                $data[] = array(
+                    'date' => get_the_date( 'F d, Y', $post_id ),
+                    'permalink' => get_post_permalink( $post_id ),
+                    'title' => get_the_title( $post_id ),
+                );
+            }
+            $ret[ 'status' ] = 'success';
+            $ret[ 'data' ] = apply_filters( 'wpbc_get_calendar_list_data', $data, $post_type, $day, $month, $year );
+        }
+        return apply_filters( 'wpbc_get_calendar_list', $ret, $post_type, $day, $month, $year );
     }
 }
 
