@@ -140,6 +140,9 @@
     text-align: center;
     border-bottom: solid 4px #F0F0F0;
 }
+.wp-better-calendar-container .wpbc_calendar_posts_list .wpbc_post_container:last-child {
+    border-bottom: none;
+}
 
 .wp-better-calendar-container .wpbc_calendar_posts_list .wpbc_post_container div:not(:last-child) {
     margin-bottom: 4px;
