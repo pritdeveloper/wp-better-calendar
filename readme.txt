@@ -1,7 +1,7 @@
 === WP Better Calendar ===
 Contributors: pritpalsinghin
 Donate link: https://www.paypal.me/ppsingh/25
-Tags: calendar
+Tags: calendar, widgets, admin, ajax, smooth
 Requires at least: 3.0.1
 Tested up to: 4.7.2
 Stable tag: trunk
