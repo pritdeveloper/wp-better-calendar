@@ -54,14 +54,16 @@ if (!function_exists('wpbc_get_calendar')) {
 
 if (!function_exists('wpbc_make_calendar')) {
     function wpbc_make_calendar( $post_type = 'post', $month = null, $year = null ) {
-        global $wpdb;
+        global $wpdb, $wp_locale;
         $post_type_obj = get_post_type_object( $post_type );
         if( !$month ) $month = date( 'n' );
         if( !$year ) $year = date( 'Y' );
+        // start of week
+        $start_of_week = get_option( 'start_of_week' );
         ob_start();
         // get week days
         {
-            $timestamp = strtotime( 'next Monday' );
+            $timestamp = strtotime( 'next ' . $wp_locale->get_weekday( $start_of_week ) );
             $days = array();
             for ( $i = 0; $i < 7; $i++ ) {
                 $day = strftime( '%A', $timestamp );
@@ -72,7 +74,7 @@ if (!function_exists('wpbc_make_calendar')) {
         
         // get first and last day for calendar
         {
-            $first_day_num = date_create_from_format( 'Y-n-d', "{$year}-{$month}-01" )->format( 'N' );
+            $first_day_num = date_create_from_format( 'Y-n-d', "{$year}-{$month}-01" )->format( 'w' );
             $last_day_of_month = new DateTime( "{$year}-{$month}-01" );
             $last_day_of_month->modify( "last day of this month" );
             $last_day_of_month = $last_day_of_month->format( "j" );
@@ -163,11 +165,8 @@ if (!function_exists('wpbc_make_calendar')) {
                 <tr>
                     <?php
                     $month_has_any_post = false;
-                    $ct = 0;
-                    if( $first_day_num > 1 ) {
-                        $ct = $first_day_num - 1;
-                        echo '<td colspan="' . $ct . '" class="cell"></td>';
-                    }
+                    $ct = calendar_week_mod( $first_day_num - $start_of_week );
+                    if( $ct ) echo '<td colspan="' . $ct . '" class="cell"></td>';
                     ?>
                     <?php for( $i = 1; $i <= $last_day_of_month; $i++ ) { ?>
                         <?php
