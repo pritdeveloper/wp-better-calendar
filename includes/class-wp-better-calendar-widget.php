@@ -16,6 +16,7 @@ class WP_Better_Calendar_Widget extends WP_Widget {
 
 	public function widget( $args, $instance ) {
 		$selected_post_type = ! empty( $instance['post_type'] ) ? $instance['post_type'] : 'post';
+		$selected_view_type = ! empty( $instance[ 'view_type' ] ) ? $instance[ 'view_type' ] : 'calendar';
 		global $wpdb;
 		$result = $wpdb->get_row("SELECT * FROM $wpdb->posts WHERE post_type='$selected_post_type' AND post_status='publish' LIMIT 1");
 		if($result){
@@ -23,7 +24,7 @@ class WP_Better_Calendar_Widget extends WP_Widget {
 			if ( ! empty( $instance['title'] ) ) {
 				echo $args['before_title'] . apply_filters( 'widget_title', $instance['title'] ) . $args['after_title'];
 			}
-			echo '<div class="wp-better-calendar-container" data-post_type="' . $selected_post_type . '">' . wpbc_make_calendar( $selected_post_type ) . '</div>';
+			echo '<div class="wp-better-calendar-container" data-post_type="' . $selected_post_type . '">' . wpbc_make_calendar( $selected_post_type, null, null, $selected_view_type ) . '</div>';
 			echo $args['after_widget'];
 		}
 	}
@@ -35,6 +36,15 @@ class WP_Better_Calendar_Widget extends WP_Widget {
 		$all_post_types = apply_filters( 'wpbc_widget_post_types', get_post_types( array(
 			'public' => true,
 		), 'objects' ), $instance );
+		
+		// all view types
+		{
+			$all_view_types = array(
+				'calendar'	=>	__( 'Calendar' ),
+				'list'	=>	__( 'List' ),
+			);
+		}
+		$selected_view_type = ! empty( $instance['view_type'] ) && array_key_exists( $instance[ 'view_type' ], $all_view_types ) ? $instance[ 'view_type' ] : 'calendar';
 		?>
 		<p>
 			<label for="<?php echo esc_attr( $this->get_field_id( 'title' ) ); ?>"><?php esc_attr_e( 'Title:' ); ?></label>
@@ -49,6 +59,15 @@ class WP_Better_Calendar_Widget extends WP_Widget {
 				<?php } ?>
 			</select>
 		</p>
+		<p>
+			<label for="<?php echo esc_attr( $this->get_field_id( 'view_type' ) ); ?>"><?php esc_attr_e( 'View Type:' ); ?></label>
+			<select class="widefat" id="<?php echo esc_attr( $this->get_field_id( 'view_type' ) ); ?>" name="<?php echo esc_attr( $this->get_field_name( 'view_type' ) ); ?>">
+				<?php foreach( $all_view_types as $view_type_id => $view_type ) { ?>
+					<?php $selected = $selected_view_type == $view_type_id ? ' selected' : ''?>
+					<option value="<?php echo $view_type_id ?>"<?php echo $selected ?>><?php echo $view_type ?></option>
+				<?php } ?>
+			</select>
+		</p>
 		<?php 
 	}
 
@@ -56,6 +75,7 @@ class WP_Better_Calendar_Widget extends WP_Widget {
 		$instance = array();
 		$instance['title'] = ( ! empty( $new_instance['title'] ) ) ? strip_tags( $new_instance['title'] ) : '';
 		$instance['post_type'] = ( ! empty( $new_instance['post_type'] ) ) ? $new_instance['post_type'] : 'post';
+		$instance[ 'view_type' ] = ( ! empty( $new_instance['view_type'] ) ) ? $new_instance['view_type'] : 'calendar';
 		return $instance;
 	}
 }

@@ -53,7 +53,7 @@ if (!function_exists('wpbc_get_calendar')) {
 }
 
 if (!function_exists('wpbc_make_calendar')) {
-    function wpbc_make_calendar( $post_type = 'post', $month = null, $year = null ) {
+    function wpbc_make_calendar( $post_type = 'post', $month = null, $year = null, $selected_view_type = 'calendar' ) {
         global $wpdb, $wp_locale;
         $post_type_obj = get_post_type_object( $post_type );
         if( !$month ) $month = date( 'n' );
