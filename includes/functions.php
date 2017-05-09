@@ -56,6 +56,19 @@ if (!function_exists('wpbc_make_calendar')) {
     function wpbc_make_calendar( $post_type = 'post', $month = null, $year = null, $selected_view_type = 'calendar' ) {
         global $wpdb, $wp_locale;
         $post_type_obj = get_post_type_object( $post_type );
+        
+        // select the nearest month which has post in it
+        if( !$month and !$year ) {
+            $latest = $wpdb->get_row("SELECT MONTH(post_date) AS month, YEAR(post_date) AS year
+        		FROM {$wpdb->posts}
+        		WHERE post_type = '{$post_type}' AND post_status = 'publish'
+    			ORDER BY post_date DESC
+    			LIMIT 1");
+    		if( $latest ) {
+    		    $month = $latest->month;
+    		    $year = $latest->year;
+    		}
+        }
         if( !$month ) $month = date( 'n' );
         if( !$year ) $year = date( 'Y' );
         // start of week
@@ -242,8 +255,8 @@ if (!function_exists('wpbc_calendar_posts_list')) {
     function wpbc_calendar_posts_list() {
         $post_type = isset( $_POST[ 'post_type' ] ) ? wpbc_clean( $_POST[ 'post_type' ] ) : 'post';
         $day = isset( $_POST[ 'day' ] ) ? absint( $_POST[ 'day' ] ) : '';
-        $month = isset( $_POST[ 'month' ] ) ? absint( $_POST[ 'month' ] ) : date( 'n' );
-        $year = isset( $_POST[ 'year' ] ) ? absint( $_POST[ 'year' ] ) : date( 'Y' );
+        $month = isset( $_POST[ 'month' ] ) ? absint( $_POST[ 'month' ] ) : null;
+        $year = isset( $_POST[ 'year' ] ) ? absint( $_POST[ 'year' ] ) : null;
         $posts_list = wpbc_get_calendar_list( $post_type, $day, $month, $year );
         echo json_encode( $posts_list );
         die;
@@ -263,6 +276,18 @@ if (!function_exists('wpbc_get_calendar_list')) {
             $ret[ 'status' ] = 'error';
             $ret[ 'msg' ] = 'Something went wrong.<br />Please try again.';
             return apply_filters( 'wpbc_get_calendar_list', $ret, $post_type, $day, $month, $year );
+        }
+        // select the nearest month which has post in it
+        if( !$month and !$year ) {
+            $latest = $wpdb->get_row("SELECT MONTH(post_date) AS month, YEAR(post_date) AS year
+        		FROM {$wpdb->posts}
+        		WHERE post_type = '{$post_type}' AND post_status = 'publish'
+    			ORDER BY post_date DESC
+    			LIMIT 1");
+    		if( $latest ) {
+    		    $month = $latest->month;
+    		    $year = $latest->year;
+    		}
         }
         if( !$month ) $month = date( 'n' );
         if( !$year ) $year = date( 'Y' );
